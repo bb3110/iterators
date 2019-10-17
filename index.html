@@ -5,9 +5,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
     <style type="text/css">
-      @import url(http://fonts.googleapis.com/css?family=Droid+Serif);
-      @import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
-      @import url(http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif);
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
 
       body {
         font-family: 'Droid Serif';
@@ -164,8 +164,8 @@ layout: false
 ```
 &gt;&gt;&gt; li = range(3)
 &gt;&gt;&gt; for i in li:
-...     print i,
-0 1 2
+...     print(i, end=&#34; &#34;)
+0 1 2 
 
 ```
 **Note**
@@ -182,8 +182,8 @@ layout: false
 
 ```
 &gt;&gt;&gt; dict = {&#39;a&#39;:1, &#39;b&#39;:2}
-&gt;&gt;&gt; for k in dict:
-...     print k, dict[k]
+&gt;&gt;&gt; for k in dict: #doctest: +SKIP
+...     print(k, dict[k])
 a 1
 b 2
 
@@ -195,7 +195,7 @@ b 2
 ```
 &gt;&gt;&gt; str = &#39;abc&#39;
 &gt;&gt;&gt; for c in str:
-...     print c
+...     print(c)
 a
 b
 c
@@ -206,12 +206,20 @@ c
 #### File objects  support iteration
 
 
-```
+&lt;!--
 &gt;&gt;&gt; import subprocess
-&gt;&gt;&gt; subprocess.call(&#34;/bin/echo &#39;one\ntwo\nthree&#39; &gt; 123&#34;, shell=True)
-0
+&gt;&gt;&gt; n = subprocess.call(&#34;/bin/echo &#39;one\ntwo\nthree&#39; &gt; 123&#34;, shell=True)
+
+--&gt;
+
+    #123
+    one
+    two
+    three
+
+```
 &gt;&gt;&gt; for row in open(&#39;123&#39;):
-...     print row,
+...     print(row, end=&#34;&#34;)
 one
 two
 three
@@ -222,7 +230,8 @@ three
 ### Consider the list
 
 ```
-&gt;&gt;&gt; print li
+&gt;&gt;&gt; li = [0, 1, 2]
+&gt;&gt;&gt; print(li)
 [0, 1, 2]
 
 ```
@@ -232,23 +241,23 @@ three
 
 ```
 &gt;&gt;&gt; li_iter = li.__iter__()
-&gt;&gt;&gt; print type(li_iter)
-&lt;type &#39;listiterator&#39;&gt;
+&gt;&gt;&gt; print(type(li_iter))
+&lt;class &#39;list_iterator&#39;&gt;
 
 ```
-* `__iter__` returns an object with a `next` method
+* `__iter__` returns an object with a `__next__` method
 
 ```
-&gt;&gt;&gt; print li_iter.next()
+&gt;&gt;&gt; print(li_iter.__next__())
 0
-&gt;&gt;&gt; print li_iter.next()
+&gt;&gt;&gt; print(li_iter.__next__())
 1
-&gt;&gt;&gt; print li_iter.next()
+&gt;&gt;&gt; print(li_iter.__next__())
 2
-&gt;&gt;&gt; print li_iter.next()
+&gt;&gt;&gt; print(li_iter.__next__())
 Traceback (most recent call last):
   File &#34;iter.py&#34;, line 20, in &lt;module&gt;
-    print li_iter.next()
+    print(li_iter.next())
 StopIteration
 
 ```
@@ -270,15 +279,15 @@ StopIteration
 ```
 &gt;&gt;&gt; class Counter(object):
 ...     def __init__(self, size):
-...         print &#34;__init__:&#34;, size
+...         print(&#34;__init__:&#34;, size)
 ...         self.size = size
 ...         self.start = 0
 ...
 ...     def __iter__(self):
-...         print &#34;__iter__:&#34;, self.size
+...         print(&#34;__iter__:&#34;, self.size)
 ...         return self
 ...
-...     def next(self):
+...     def __next__(self):
 ...         if self.start &lt; self.size:
 ...             self.start = self.start + 1
 ...             return self.start
@@ -289,9 +298,9 @@ StopIteration
 &gt;&gt;&gt; c = Counter(3)
 __init__: 3
 &gt;&gt;&gt; for num in c:
-...     print num,
+...     print(num, end=&#34; &#34;)
 __iter__: 3
-1 2 3
+1 2 3 
 
 ```
 
@@ -310,15 +319,15 @@ __iter__: 3
 ```
 &gt;&gt;&gt; def f(n):
 ...    return n
-&gt;&gt;&gt; print type(f), type(f(1))
-&lt;type &#39;function&#39;&gt; &lt;type &#39;int&#39;&gt;
+&gt;&gt;&gt; print(type(f), type(f(1)))
+&lt;class &#39;function&#39;&gt; &lt;class &#39;int&#39;&gt;
 
 ```
 ```
 &gt;&gt;&gt; def g(n):
 ...    yield n
-&gt;&gt;&gt; print type(g), type(g(1))
-&lt;type &#39;function&#39;&gt; &lt;type &#39;generator&#39;&gt;
+&gt;&gt;&gt; print(type(g), type(g(1)))
+&lt;class &#39;function&#39;&gt; &lt;class &#39;generator&#39;&gt;
 
 ```
 
@@ -328,18 +337,17 @@ __iter__: 3
 
 ```
 &gt;&gt;&gt; def g(n):
-...     print &#39;enter g with&#39;,n
+...     print(&#39;enter g with&#39;,n)
 ...     yield n
-...     print &#39;after yield&#39;
+...     print(&#39;after yield&#39;)
 
 ```
 ```
 &gt;&gt;&gt; g2=g(2)
-&gt;&gt;&gt; g2.next()
+&gt;&gt;&gt; g2.__next__()
 enter g with 2
 2
-&gt;&gt;&gt; g2.next() #doctest: +SKIP
-after yield
+&gt;&gt;&gt; g2.__next__() #doctest: +SKIP
 Traceback (most recent call last):
 ...
 StopIteration
@@ -356,13 +364,13 @@ StopIteration
 
 ```
 &gt;&gt;&gt; def g(n):
-...     print &#39;enter g with &#39;,n
+...     print(&#39;enter g with &#39;,n)
 ...     i=0
 ...     while i &lt; n:
 ...         yield i
-...         print &#39;after yield&#39;
+...         print(&#39;after yield&#39;)
 ...         i += 1
-...     print &#39;after while&#39;
+...     print(&#39;after while&#39;)
 
 ```
 ```
@@ -371,14 +379,14 @@ StopIteration
 ```
 --
 ```
-&gt;&gt;&gt; g2.next()
+&gt;&gt;&gt; next(g2)
 enter g with  2
 0
 
 ```
 --
 ```
-&gt;&gt;&gt; g2.next()
+&gt;&gt;&gt; next(g2)
 after yield
 1
 
@@ -391,7 +399,7 @@ after yield
 after while
 Traceback (most recent call last):
   File &#34;gen.py&#34;, line 42, in &lt;module&gt;
-    print g2.next()
+    print(g2.next())
 StopIteration
 
 ```
@@ -400,7 +408,7 @@ StopIteration
 
 ```
 &gt;&gt;&gt; for  i in g(5):
-...     print i,
+...     print(i, end=&#34; &#34;)
 enter g with  5
 0 after yield
 1 after yield
@@ -422,8 +430,8 @@ after while
 ...         yield a
 ...         a, b = b, a + b
 &gt;&gt;&gt; for i in fib(5):
-...     print i,
-1 2 3
+...     print(i, end=&#34; &#34;)
+1 2 3 
 
 ```
 
@@ -434,8 +442,9 @@ It is always possible to convert a generator to a list
 
 
 ```
-&gt;&gt;&gt; print list(fib(100))
+&gt;&gt;&gt; print(list(fib(100)))
 [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
+
 ```
 
 ---
